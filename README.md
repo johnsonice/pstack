@@ -1,18 +1,18 @@
 <!-- mirror:start — this top section is specific to the mirror. Everything after mirror:end is the upstream README from cursor/plugins/pstack, unchanged. To sync with upstream, follow MIRROR.md. -->
 # pstack — standalone mirror
 
-> **Mirror** of [`cursor/plugins/pstack`](https://github.com/cursor/plugins/tree/main/pstack) — kept in sync for standalone use.
+> Fork of [`backnotprop/pstack`](https://github.com/backnotprop/pstack), a **mirror** of [`cursor/plugins/pstack`](https://github.com/cursor/plugins/tree/main/pstack) — kept in sync for standalone use.
 > Works in Claude Code, Codex, Pi, and other agents, not only Cursor.
 > See also [`backnotprop/bro`](https://github.com/backnotprop/bro), referenced by the [`/bro`](./skills/bro/SKILL.md) skill.
 
-Cursor's original README is [further down this page](#pstack).
+Cursor's original README is [further down this page](#pstack). Its `/add-plugin pstack` installs Cursor's official plugin, not this fork.
 
 ## Install
 
 pstack is a folder of plain [Agent Skills](https://agentskills.io) (`skills/<name>/SKILL.md`). You don't need Cursor. The [`skills` CLI](https://skills.sh) installs them into Claude Code, Codex, Pi, Cursor, OpenCode, and other agents:
 
 ```bash
-npx skills add backnotprop/pstack
+npx skills add johnsonice/pstack
 ```
 
 The CLI shows every skill in a list you can search. Select the skills you want, then select your agents.
