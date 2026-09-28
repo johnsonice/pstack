@@ -35,6 +35,8 @@ backnotprop already syncs Cursor and rewrites new Cursor-only text, so merging t
 
    A conflict is usually in the top of `README.md`. Keep this fork's install command (`npx skills add johnsonice/pstack`) and take the rest of their change.
 
+   If the last push is rejected as non-fast-forward, the two `upstream` branches diverged because this fork once synced Cursor itself (Option B). Skip that push, and use Option B when you need Cursor's latest.
+
 ## Option B: sync straight from Cursor
 
 Use this when backnotprop falls behind Cursor.
