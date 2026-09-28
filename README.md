@@ -17,6 +17,8 @@ npx skills add johnsonice/pstack
 
 The CLI shows every skill in a list you can search. Select the skills you want, then select your agents.
 
+Developing pstack, or want edits in a checkout to apply at once? Clone it and run [`install.sh`](./install.sh). It symlinks every skill into `~/.agents/skills/` (Codex and other agents) and `~/.claude/skills/` (Claude Code), and the two subagents into `~/.claude/agents/`. It skips `make-bot-ui`, which is Cursor-only. `./install.sh --uninstall` removes those links and nothing else.
+
 ## Skills
 
 The simplest install is everything. The skills are small text files:
