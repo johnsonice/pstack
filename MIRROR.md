@@ -66,10 +66,10 @@ Use this when backnotprop falls behind Cursor.
 
    ```bash
    cp agents/comment-sicko.md skills/no-comments/references/comment-sicko.md
-   git diff upstream@{1} upstream -- skills | grep -nE '\.cursor/|agent-transcripts|cursor-team-kit|create-skill|Task'
+   git diff upstream@{1} upstream -- skills | grep -nE '\.cursor/|agent-transcripts|cursor-team-kit|create-skill|Task|AskQuestion|pstack/skills|git show origin/main|^\+name: [A-Z]'
    ```
 
-   Rewrite any new hits the same way as the existing edits. The Harness section in `skills/poteto-mode/SKILL.md` lists the mappings.
+   Rewrite any new hits the same way as the existing edits. The Harness section in `skills/poteto-mode/SKILL.md` lists the mappings. Two of the checks are this fork's: `pstack/skills` paths become `<pstack skills dir>` (the multi-phase-plan playbook explains it), and a `name:` line must equal the skill's folder name in kebab-case, or the `skills` CLI and Codex can't find the skill by name.
 
 4. Push both branches:
 

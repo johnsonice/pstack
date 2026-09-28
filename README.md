@@ -19,21 +19,54 @@ The CLI shows every skill in a list you can search. Select the skills you want, 
 
 ## Skills
 
-These skills don't call other pstack skills, so each one works alone:
+The simplest install is everything. The skills are small text files:
 
-`unslop`, `bro`, `how`, `tdd`, `typescript-best-practices`, `arena`, `swarm`, `interrogate`, `reflect`, `show-me-your-work`, `figure-it-out`, `automate-me`
+```bash
+npx skills add johnsonice/pstack -s '*'
+```
 
-Some skills call other skills. Install these together:
+Installing a subset? These skills don't call other pstack skills, so each one works alone:
+
+`unslop`, `bro`, `how`, `tdd`, `typescript-best-practices`, `arena`, `swarm`, `interrogate`, `reflect`, `setup-pstack`, and every `principle-*` skill
+
+The rest call other skills. The `skills` CLI doesn't follow these, so install each row together:
 
 | Skill | Also install |
 |---|---|
-| `teach` | `how`, `why` |
 | `why` | `how` |
+| `teach` | `how`, `why`, `unslop` |
 | `technical-writing` | `unslop` |
-| `architect` | `arena`, `how` |
+| `show-me-your-work` | `unslop` |
+| `recall` | `why`, `how`, `unslop` |
+| `architect` | `arena`, `how`, `why` |
+| `no-comments` | `architect`, `arena`, `how`, `why` |
 | `blast-radius` | `arena`, `how`, `why`, `unslop` |
+| `automate-me` | `poteto-mode`, `unslop` |
+| `figure-it-out` | `poteto-mode`, `architect`, `arena`, `show-me-your-work`, and everything those need |
 | `create-verification-skill` | `maintain-verification-skill` |
+| `maintain-verification-skill` | `create-verification-skill` |
+| `setup-pstack` | `create-verification-skill`, only for the optional offer at the end |
 | `poteto-mode` | all `principle-*` skills and most of the other skills |
+
+Skills that name a principle in bold (`architect`, `arena`, `figure-it-out`, `no-comments`, `reflect`, `show-me-your-work`, `typescript-best-practices`) read the matching `principle-*` skill when it is installed. Without it, the agent has only the principle's name.
+
+`make-bot-ui` needs Cursor's webhook routines and has no equivalent elsewhere. Skip it outside Cursor.
+
+## Subagents
+
+`poteto-mode` spawns a `poteto-agent` subagent and `no-comments` spawns `Comment Sicko`. Both definitions live in [`agents/`](./agents/). The `skills` CLI doesn't install them, and the skills fall back to a general subagent with the same instructions, so this step is optional. Claude Code reads agent files from `~/.claude/agents/`:
+
+```bash
+git clone --depth 1 https://github.com/johnsonice/pstack.git /tmp/pstack && mkdir -p ~/.claude/agents && cp /tmp/pstack/agents/*.md ~/.claude/agents/
+```
+
+## Scripts
+
+`poteto-mode` ships three scripts. `check-plan.mjs` runs on Node. `watch-pr` (babysit playbook) and `orch` (orchestrate playbook) run on [Bun](https://bun.sh) and install their one npm dependency on first run:
+
+```bash
+brew install oven-sh/bun/bun
+```
 
 ## What this mirror changes
 

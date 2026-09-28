@@ -1,5 +1,5 @@
 ---
-name: Poteto Mode
+name: poteto-mode
 description: poteto's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. Use for poteto, /poteto-mode, or requests to work in this style.
 disable-model-invocation: true
 mode: true
@@ -104,7 +104,9 @@ pstack was written for Cursor. In another harness (Claude Code, Codex, Pi, OpenC
 - **Transcripts.** Read only the active workspace's sessions, never other projects'. Cursor: the `agent-transcripts/` directory the system prompt names. Claude Code: `~/.claude/projects/<slug>/*.jsonl`, where `<slug>` is the workspace path with every character that isn't a letter or digit turned into "-". Pi: `~/.pi/agent/sessions/--<slug>--/*.jsonl`, where `<slug>` is the workspace path with the leading slash dropped and each "/" turned into "-". Codex: `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl`, keeping files whose first line has `payload.cwd` equal to the workspace path. OpenCode: `~/.local/share/opencode/storage/`.
 - **Skill folders.** Project: `.cursor/skills/` (Cursor), `.claude/skills/` (Claude Code), `.pi/skills/` (Pi), `.agents/skills/` (Codex, OpenCode, and others). User: `~/.cursor/skills/`, `~/.claude/skills/`, `~/.pi/agent/skills/`, `~/.codex/skills/`, `~/.agents/skills/`.
 - **Questions.** `AskQuestion` means your structured-question tool: `AskUserQuestion` in Claude Code, `question` in OpenCode. Without one, ask in chat with numbered options.
-- **Tools pstack doesn't ship.** `create-skill` is Cursor's built-in skill-authoring skill. Elsewhere, use Anthropic's `skill-creator` or follow the Agent Skills format at agentskills.io. `deslop`, `control-cli`, and `control-ui` come from Cursor's `cursor-team-kit` plugin. Without `deslop`, reread the diff before commit and cut AI slop yourself. Without the control skills, drive the app with the automation you have: Playwright or a CDP browser for web and Electron, tmux or a PTY for CLIs and TUIs. `/loop` is built into Cursor and Claude Code. Without it, wait between checks with a timed shell command.
+- **Tools pstack doesn't ship.** `create-skill` is Cursor's built-in skill-authoring skill. Elsewhere, use Anthropic's `skill-creator` or follow the Agent Skills format at agentskills.io. `deslop`, `control-cli`, and `control-ui` come from Cursor's `cursor-team-kit` plugin. Without `deslop`, reread the diff before commit and cut AI slop yourself. Without the control skills, drive the app with the automation you have: Playwright or a CDP browser for web and Electron, tmux or a PTY for CLIs and TUIs. `/loop` and `/goal` are built into Cursor and Claude Code. Without `/loop`, wait between checks with a timed shell command. Without `/goal`, write the goal text at the top of your decision trail and re-read it at every tick.
+- **Agent store.** Cursor gives each agent a store directory and names its path in the system prompt. Elsewhere, use `~/.agents/pstack-store/<project-slug>/` and tell the user the path.
+- **Scripts.** Paths like `scripts/watch-pr/watch-pr`, `scripts/check-plan.mjs`, and `bun scripts/orch/orch.ts` are relative to this skill's folder, `<skills dir>/poteto-mode/` per Skill folders above. `check-plan.mjs` runs on Node. `watch-pr` and `orch` run on Bun (`brew install oven-sh/bun/bun`) and install their one npm dependency on first run.
 
 ## Writing the reply
 
