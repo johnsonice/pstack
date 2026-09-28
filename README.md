@@ -56,7 +56,7 @@ Skills that name a principle in bold (`architect`, `arena`, `figure-it-out`, `no
 
 ## Subagents
 
-`poteto-mode` spawns a `poteto-agent` subagent and `no-comments` spawns `Comment Sicko`. Both definitions live in [`agents/`](./agents/). The `skills` CLI doesn't install them, and the skills fall back to a general subagent with the same instructions, so this step is optional. Claude Code reads agent files from `~/.claude/agents/`:
+`poteto-mode` spawns a `poteto-agent` subagent and `no-comments` spawns `Comment Sicko`. Both definitions live in [`agents/`](./agents/). The `skills` CLI doesn't install them, and the skills fall back to a general subagent with the same instructions, so this step is optional and Claude Code only. Claude Code reads agent files from `~/.claude/agents/`:
 
 ```bash
 git clone --depth 1 https://github.com/johnsonice/pstack.git /tmp/pstack && mkdir -p ~/.claude/agents && cp /tmp/pstack/agents/*.md ~/.claude/agents/
@@ -73,6 +73,12 @@ brew install oven-sh/bun/bun
 ## What this mirror changes
 
 Many skills were Cursor-specific. They've been rewritten to work in any harness.
+
+This fork adds three things on top:
+
+- `disable-model-invocation: true` is gone from every skill another skill routes to (41 of 47). Claude Code refuses Skill-tool calls to a flagged skill and tells the model not to work around it, which would have broken `poteto-mode`'s routing to `how`, `unslop`, the principles, and the rest. The entry points nothing routes to (`blast-radius`, `bro`, `recall`, `teach`, `make-bot-ui`) keep the flag, so only you start them. `scripts/check-skills.py --fix` re-applies this after an upstream sync.
+- Codex names the skills `pstack:<name>` because it reads the plugin name from `.cursor-plugin/plugin.json`. Mention one as `$pstack:how`. Codex ignores `disable-model-invocation`, so every skill is model-invocable there, and it has no entry for the two subagents, so the skills use their general-subagent fallback.
+- `install.sh` and the Subagents and Scripts sections above.
 <!-- mirror:end -->
 
 ---

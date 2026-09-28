@@ -25,11 +25,25 @@ already=0
 skipped=0
 removed=0
 
+lower() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
+
+# True when the symlink at $2 already points at $1. Compares by inode, then
+# case-insensitively by path, so a differently cased cwd (macOS filesystems
+# ignore case) or a dangling link into this checkout still counts as ours.
+points_here() { # src dest
+  [ "$2" -ef "$1" ] || [ "$(lower "$(readlink "$2")")" = "$(lower "$1")" ]
+}
+
 link_one() { # src dest
   local src="$1" dest="$2"
   if [ -L "$dest" ]; then
-    if [ "$(readlink "$dest")" = "$src" ]; then
+    if points_here "$src" "$dest"; then
       already=$((already + 1))
+    elif [ ! -e "$dest" ]; then
+      rm "$dest"
+      ln -s "$src" "$dest"
+      echo "+ ${dest/#$HOME/~} (replaced a dangling link)"
+      linked=$((linked + 1))
     else
       echo "! ${dest/#$HOME/~} SKIPPED: symlink points to $(readlink "$dest")"
       skipped=$((skipped + 1))
@@ -44,16 +58,14 @@ link_one() { # src dest
   fi
 }
 
-unlink_one() { # dest
-  local dest="$1"
+unlink_one() { # src dest
+  local src="$1" dest="$2"
   [ -L "$dest" ] || return 0
-  case "$(readlink "$dest")" in
-    "$REPO_DIR"/*)
-      rm "$dest"
-      echo "- ${dest/#$HOME/~}"
-      removed=$((removed + 1))
-      ;;
-  esac
+  if points_here "$src" "$dest"; then
+    rm "$dest"
+    echo "- ${dest/#$HOME/~}"
+    removed=$((removed + 1))
+  fi
 }
 
 is_skipped() {
@@ -71,7 +83,7 @@ for dir in "${SKILL_DIRS[@]}"; do
     name="$(basename "$src")"
     is_skipped "$name" && continue
     if [ "$mode" = "--uninstall" ]; then
-      unlink_one "$dir/$name"
+      unlink_one "$src" "$dir/$name"
     else
       link_one "$src" "$dir/$name"
     fi
@@ -82,7 +94,7 @@ mkdir -p "$CLAUDE_AGENTS_DIR"
 for src in "$REPO_DIR"/agents/*.md; do
   dest="$CLAUDE_AGENTS_DIR/$(basename "$src")"
   if [ "$mode" = "--uninstall" ]; then
-    unlink_one "$dest"
+    unlink_one "$src" "$dest"
   else
     link_one "$src" "$dest"
   fi

@@ -62,14 +62,15 @@ Use this when backnotprop falls behind Cursor.
 
    A conflict means Cursor changed a line this mirror also changed. Keep Cursor's new meaning and reapply the harness-neutral wording.
 
-3. Refresh the bundled Comment Sicko prompt, then check that no new Cursor-only instructions arrived:
+3. Refresh the bundled Comment Sicko prompt, run this fork's lint with `--fix`, then check that no new Cursor-only instructions arrived:
 
    ```bash
    cp agents/comment-sicko.md skills/no-comments/references/comment-sicko.md
-   git diff upstream@{1} upstream -- skills | grep -nE '\.cursor/|agent-transcripts|cursor-team-kit|create-skill|Task|AskQuestion|pstack/skills|git show origin/main|^\+name: [A-Z]'
+   python3 scripts/check-skills.py --fix
+   git diff upstream@{1} upstream -- skills | grep -nE '\.cursor/|agent-transcripts|cursor-team-kit|create-skill|Task|AskQuestion|pstack/skills|git show origin/main'
    ```
 
-   Rewrite any new hits the same way as the existing edits. The Harness section in `skills/poteto-mode/SKILL.md` lists the mappings. Two of the checks are this fork's: `pstack/skills` paths become `<pstack skills dir>` (the multi-phase-plan playbook explains it), and a `name:` line must equal the skill's folder name in kebab-case, or the `skills` CLI and Codex can't find the skill by name.
+   Rewrite any new hits the same way as the existing edits. The Harness section in `skills/poteto-mode/SKILL.md` lists the mappings. `pstack/skills` paths become `<pstack skills dir>` (the multi-phase-plan playbook explains it). `check-skills.py` enforces the fork's other two rules: a `name:` equals its folder name, and a skill another skill routes to has no `disable-model-invocation: true`. The lint fixes the second itself and reports the first.
 
 4. Push both branches:
 
