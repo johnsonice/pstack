@@ -29,7 +29,7 @@ npx skills add johnsonice/pstack -s '*'
 
 Installing a subset? These skills don't call other pstack skills, so each one works alone:
 
-`unslop`, `bro`, `how`, `tdd`, `typescript-best-practices`, `arena`, `swarm`, `interrogate`, `reflect`, `setup-pstack`, and every `principle-*` skill
+`unslop`, `bro`, `how`, `tdd`, `typescript-best-practices`, `arena`, `swarm`, `interrogate`, `reflect`, `correct`, `in-your-own-words`, `benchmark-checklist`, and every `principle-*` skill except `principle-explain-the-number`
 
 The rest call other skills. The `skills` CLI doesn't follow these, so install each row together:
 
@@ -49,6 +49,7 @@ The rest call other skills. The `skills` CLI doesn't follow these, so install ea
 | `maintain-verification-skill` | `create-verification-skill` |
 | `setup-pstack` | `create-verification-skill`, only for the optional offer at the end |
 | `ketchup` | `bro` |
+| `principle-explain-the-number` | `benchmark-checklist` |
 | `poteto-mode` | all `principle-*` skills and most of the other skills |
 | `poteto-help` | the skills you want help with |
 
@@ -58,7 +59,7 @@ Skills that name a principle in bold (`architect`, `arena`, `figure-it-out`, `no
 
 ## Subagents
 
-`poteto-mode` spawns a `poteto-agent` subagent and `no-comments` spawns `Comment Sicko`. Both definitions live in [`agents/`](./agents/). The `skills` CLI doesn't install them, and the skills fall back to a general subagent with the same instructions, so this step is optional and Claude Code only. Claude Code reads agent files from `~/.claude/agents/`:
+`poteto-mode` spawns a `poteto-agent` subagent and `no-comments` spawns `comment-sicko` (Comment Sicko). Both definitions live in [`agents/`](./agents/). The `skills` CLI doesn't install them, and the skills fall back to a general subagent with the same instructions, so this step is optional and Claude Code only. Claude Code reads agent files from `~/.claude/agents/`:
 
 ```bash
 git clone --depth 1 https://github.com/johnsonice/pstack.git /tmp/pstack && mkdir -p ~/.claude/agents && cp /tmp/pstack/agents/*.md ~/.claude/agents/
@@ -78,7 +79,7 @@ Many skills were Cursor-specific. They've been rewritten to work in any harness.
 
 This fork adds three things on top:
 
-- `disable-model-invocation: true` is gone from every skill another skill routes to (41 of 47). Claude Code refuses Skill-tool calls to a flagged skill and tells the model not to work around it, which would have broken `poteto-mode`'s routing to `how`, `unslop`, the principles, and the rest. The entry points nothing routes to (`blast-radius`, `bro`, `recall`, `teach`, `make-bot-ui`) keep the flag, so only you start them. `scripts/check-skills.py --fix` re-applies this after an upstream sync.
+- `disable-model-invocation: true` is gone from every skill another skill routes to. Claude Code refuses Skill-tool calls to a flagged skill and tells the model not to work around it, which would have broken `poteto-mode`'s routing to `how`, `unslop`, the principles, and the rest. Only the skills nothing routes to keep the flag (today `poteto-help` and `principle-explain-the-number`), so only you start them. `scripts/check-skills.py --fix` re-applies this after an upstream sync, and `--graph` prints who routes to whom.
 - Codex names the skills `pstack:<name>` because it reads the plugin name from `.cursor-plugin/plugin.json`. Mention one as `$pstack:how`. Codex ignores `disable-model-invocation`, so every skill is model-invocable there, and it has no entry for the two subagents, so the skills use their general-subagent fallback.
 - `install.sh` and the Subagents and Scripts sections above.
 <!-- mirror:end -->
@@ -119,6 +120,8 @@ that's it. the other skills are situational; the mode skill uses them for you as
 ## usage
 
 use [`/poteto-mode`](./skills/poteto-mode/SKILL.md) at the start of a task. it reads your request, picks from a set of playbooks, and runs the other skills as the steps need them.
+
+pick `/poteto-mode` from the `/` menu before you type your task, so cursor attaches the skill to the message.
 
 ### just use [`/poteto-mode`](./skills/poteto-mode/SKILL.md)
 
@@ -198,10 +201,11 @@ to keep [`/poteto-mode`](./skills/poteto-mode/SKILL.md) on across turns, pick it
 |---|---|
 | [`/poteto-mode`](./skills/poteto-mode/SKILL.md) | default entry point for any non-trivial task. |
 | [`/poteto-help`](./skills/poteto-help/SKILL.md) | you're new to pstack, or unsure which skill, playbook, or principle fits. finds out what you're trying to do, answers that part, and hands you a prompt to type. runs only when you type `/poteto-help`. |
+| [`/in-your-own-words`](./skills/in-your-own-words/SKILL.md) | you want the agent to play back your goal and the problem before it starts. runs only when you type `/in-your-own-words`. |
 | [`/how`](./skills/how/SKILL.md) | you want a walkthrough of how a subsystem works. |
 | [`/why`](./skills/why/SKILL.md) | you want to know why something was built this way. discovers available MCPs at run time and queries each evidence category in parallel (source control, issue tracker, long-form docs, real-time chat, infra observability, error tracking, analytics warehouse). |
 | [`/recall`](./skills/recall/SKILL.md) | you're starting or resuming work and want your recent context on a topic rebuilt from your own chat history and the shared record, handed back as a tight current-state brief. |
-| [`/ketchup`](./skills/ketchup/SKILL.md) | you want everything in this chat since your last message, in plain words, with an executive summary for each action item so you can make the call. |
+| [`/ketchup`](./skills/ketchup/SKILL.md) | you want what changed in this chat since your last message, in a few plain sentences and small visuals, with just enough context on each action item to make the call. |
 | [`/blast-radius`](./skills/blast-radius/SKILL.md) | you have a small-looking change and want to know what else it could break, with the one fact it's safe because of proven by running code, not asserted. |
 | [`/architect`](./skills/architect/SKILL.md) | you're about to write code that crosses a function boundary and want the caller's usage, types, and module shape settled first. |
 | [`/arena`](./skills/arena/SKILL.md) | you want N parallel attempts at the same thing, then to grab the best parts of each. |
